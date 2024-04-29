@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
+import { Marked } from "marked";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const loadingDefault = `# Welcome to Markdown Previewer!
+  ## This is a sub-heading demonstrating H2 size.
+  Check out the [freeCodeCamp](https://www.freecodecamp.org/learn/front-end-development-libraries/front-end-development-libraries-projects/build-a-markdown-previewer) to learn more.  
+  You can use \`inline code\` like this within your text.
+  
+  Here's an example of a code block:  
+
+  \`\`\`javascript
+  function sayHello() {
+    console.log("Hello!");
+  }
+  sayHello();
+  \`\`\`
+  * This is a list item.
+  * Another list item for demonstration.
+  > Blockquotes are used to highlight quoted text.
+
+  ![React logo](/assets/react.svg)
+
+  **This text is bolded.**
+  `;
+  const [code, setCode] = useState(loadingDefault);
+  const marked = new Marked();
+  const changeContent = (data) => {
+    const markedData = marked.parse(data);
+    setCode(markedData);
+  };
+
+  useEffect(() => changeContent(loadingDefault), []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="mainDiv">
+      <textarea
+        className="input"
+        name="editor"
+        id="editor"
+        cols="30"
+        rows="10"
+        onChange={() => changeContent(event.target.value)}
+        defaultValue={loadingDefault}
+      ></textarea>
+      <div
+        id="preview"
+        className="preview"
+        dangerouslySetInnerHTML={{ __html: code }}
+      ></div>
+    </div>
+  );
 }
 
-export default App
+export default App;
